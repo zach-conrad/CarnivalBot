@@ -1,7 +1,5 @@
 import discord
 from discord.ext import commands
-from discord import app_commands
-import json
 
 
 class Modtools(commands.Cog):
@@ -55,7 +53,7 @@ class Modtools(commands.Cog):
         conf_embed.add_field(name="Issuer", value=ctx.author.name, inline=False)
         await ctx.send(embed=conf_embed)
 
-    # Mute Command TODO - Use it inside of a database
+    # Mute Command TODO - Use it inside of a databasex
 
 
 async def setup(client):
