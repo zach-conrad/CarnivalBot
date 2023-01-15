@@ -46,8 +46,13 @@ async def load():
 
 async def main():
     async with client:
+
+        with open("/Users/zach/Documents/College/Comp Sci 1/CarnivalBot/cogs/jsonfiles/config.json", "r") as f:
+            data = json.load(f)
+            token = data["TOKEN"]
+
         await load()
-        await client.start('MTA1NzM2Mzc5Nzc2NzA5NDQyNA.GWYhvn.sU5JhQIH1giaGppj_oFeAtD-SgWP9qdGyIeMbI')
+        await client.start(token)
 
 asyncio.run(main())
 
