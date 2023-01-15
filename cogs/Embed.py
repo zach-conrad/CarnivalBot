@@ -12,6 +12,7 @@ class Embed(commands.Cog):
     async def on_ready(self):
         print("Embed.py is ready.")
 
+#Creates an embed.
     @app_commands.command(name= "embed", description= "Send an embed.")
     async def embed(self, interaction= discord.Interaction):
         embed_message = discord.Embed(title= "title", description= "Description of the embed", color= discord.Color.dark_red())
