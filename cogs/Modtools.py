@@ -1,5 +1,8 @@
+import json
+
 import discord
 from discord.ext import commands
+from discord import app_commands
 
 
 class Modtools(commands.Cog):
@@ -53,7 +56,57 @@ class Modtools(commands.Cog):
         conf_embed.add_field(name="Issuer", value=ctx.author.name, inline=False)
         await ctx.send(embed=conf_embed)
 
-    # Mute Command TODO - Use it inside of a databasex
+    # Mute Command TODO - Use it inside of a database, and add option for times.
+    @app_commands.command(name="setmuterole", description="sets the muted player role")
+    @app_commands.checks.has_permissions(administrator=True)
+    async def setmuterole(self, interaction, role: discord.Role):
+        with open("/Users/zach/Documents/College/Comp Sci 1/CarnivalBot/cogs/jsonfiles/mutes.json", "r") as f:
+            mute_role = json.load(f)
+
+            mute_role[str(interaction.guild.id)] = role.name
+
+        # Checks if there is any one in the mute roles.
+        with open("/Users/zach/Documents/College/Comp Sci 1/CarnivalBot/cogs/jsonfiles/mutes.json", "w") as f:
+            json.dump(mute_role, f, indent=4)
+
+        conf_embed = discord.Embed(title="Success!", color=discord.Color.green())
+        conf_embed.add_field(name="Mute role set!", value=f"Mute role has been set to {role.mention}", inline=False)
+
+        await interaction.response.send_message(embed=conf_embed)
+
+    @app_commands.command(name="mute", description="mute a player for a designated period of time")
+    @app_commands.checks.has_permissions(administrator=True)
+    async def mute(self, interaction, member: discord.Member, reason: str):
+        with open("/Users/zach/Documents/College/Comp Sci 1/CarnivalBot/cogs/jsonfiles/mutes.json", "r") as f:
+            role = json.load(f)
+
+            mute_role = discord.utils.get(interaction.guild.roles, name=role[str(interaction.guild.id)])
+
+        await member.add_roles(mute_role)
+
+        conf_embed = discord.Embed(title="Success!", color=discord.Color.green())
+        conf_embed.add_field(name="Muted", value=f"{member}", inline=False)
+        conf_embed.add_field(name="Reason", value=f"{reason}", inline=False)
+        conf_embed.add_field(name="Issuer", value=f"{interaction.user}", inline=False)
+
+        await interaction.response.send_message(embed=conf_embed)
+
+    @app_commands.command(name="unmute", description="unmute a player")
+    @app_commands.checks.has_permissions(administrator=True)
+    async def unmute(self, interaction, member: discord.Member, reason: str):
+        with open("/Users/zach/Documents/College/Comp Sci 1/CarnivalBot/cogs/jsonfiles/mutes.json", "r") as f:
+            role = json.load(f)
+
+            mute_role = discord.utils.get(interaction.guild.roles, name=role[str(interaction.guild.id)])
+
+        await member.remove_roles(mute_role)
+
+        conf_embed = discord.Embed(title="Success!", color=discord.Color.green())
+        conf_embed.add_field(name="UnMuted", value=f"{member}", inline=False)
+        conf_embed.add_field(name="Reason", value=f"{reason}", inline=False)
+        conf_embed.add_field(name="Issuer", value=f"{interaction.user}", inline=False)
+
+        await interaction.response.send_message(embed=conf_embed)
 
 
 async def setup(client):
