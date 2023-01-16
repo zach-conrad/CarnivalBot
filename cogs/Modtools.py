@@ -13,48 +13,52 @@ class Modtools(commands.Cog):
     async def on_ready(self):
         print("Modtools.py is ready.")
 
-    @commands.command(aliases=["purge", "c"])
-    @commands.has_permissions(manage_messages=True)
-    async def clear(self, ctx, count: int):
-        await ctx.channel.purge(limit=count)
-        await ctx.author.send(f"Cleared {count} messages.")
+    @app_commands.command(name="purge", description="Clear a certain number of messages.")
+    @app_commands.checks.has_permissions(manage_messages=True)
+    async def clear(self, interaction, count: int):
+        await interaction.channel.purge(limit=count)
 
-    # Command to kick members #TODO Make slash command.
-    @commands.command()
-    @commands.has_permissions(kick_members=True)
-    async def kick(self, ctx, member: discord.Member, modreason):
-        await ctx.guild.kick(member)
+        conf_embed = discord.Embed(title="Success!", color=discord.Color.green())
+        conf_embed.add_field(name="Messages Cleared", value= f"{count}", inline=False)
+        conf_embed.add_field(name="Issuer", value=f"{interaction.user}", inline=False)
+
+        await interaction.response.send_message(embed=conf_embed)
+
+    @app_commands.command(name="kick", description="Kick a member from the discord server.")
+    @app_commands.checks.has_permissions(kick_members=True)
+    async def kick(self, interaction, member: discord.Member, modreason : str):
+        await interaction.guild.kick(member)
 
         conf_embed = discord.Embed(title="Success!", color=discord.Color.green())
         conf_embed.add_field(name="Kicked", value=f"{member.mention}", inline=False)
         conf_embed.add_field(name="Reason", value=modreason, inline=False)
-        conf_embed.add_field(name="Punisher", value=ctx.author.name, inline=False)
-        await ctx.send(embed=conf_embed)
+        conf_embed.add_field(name="Issuer", value=interaction.user, inline=False)
 
-    # Command to ban members #TODO Make slash command.
-    @commands.command()
-    @commands.has_permissions(ban_members=True)
-    async def ban(self, ctx, member: discord.Member, modreason):
-        await ctx.guild.ban(member)
+        await interaction.response.send_message(embed=conf_embed)
+
+    @app_commands.command(name="ban", description="Ban a member from the discord server.")
+    @app_commands.checks.has_permissions(ban_members=True)
+    async def ban(self, interaction, member: discord.Member, modreason : str):
+        await interaction.guild.ban(member)
 
         conf_embed = discord.Embed(title="Success!", color=discord.Color.green())
         conf_embed.add_field(name="Banned", value=f"{member.mention}", inline=False)
         conf_embed.add_field(name="Reason", value=modreason, inline=False)
-        conf_embed.add_field(name="Punisher", value=ctx.author.name, inline=False)
-        await ctx.send(embed=conf_embed)
+        conf_embed.add_field(name="Punisher", value=interaction.user, inline=False)
+        await interaction.response.send_message(embed=conf_embed)
 
     # Command to unban members #TODO Make slash command.
     @commands.command(name="unban")
     @commands.guild_only()
     @commands.has_permissions(ban_members=True)
-    async def unban(self, ctx, userId):
+    async def unban(self, interaction, userId: discord.User):
         user = discord.Object(id=userId)
-        await ctx.guild.unban(user)
+        await interaction.guild.unban(user)
 
         conf_embed = discord.Embed(title="Success!", color=discord.Color.green())
         conf_embed.add_field(name="Unbanned", value=f"{userId.mention}", inline=False)
-        conf_embed.add_field(name="Issuer", value=ctx.author.name, inline=False)
-        await ctx.send(embed=conf_embed)
+        conf_embed.add_field(name="Issuer", value=interaction.user, inline=False)
+        await interaction.send(embed=conf_embed)
 
     # Mute Command TODO - Use it inside of a database, and add option for times.
     @app_commands.command(name="setmuterole", description="sets the muted player role")
