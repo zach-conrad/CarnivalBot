@@ -13,6 +13,7 @@ class Embed(commands.Cog):
 
     # Creates an embed.
     @app_commands.command(name="embed", description="Send an embed.")
+    @commands.has_permissions(administrator=True)
     async def embed(self, interaction=discord.Interaction):
         embed_message = discord.Embed(title="title", description="Description of the embed",
                                       color=discord.Color.dark_red())

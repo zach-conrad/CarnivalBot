@@ -45,7 +45,7 @@ async def on_guild_remove(guild):
         json.dump(mute_role, f, indent=4)
 
 
-# Loads all of the cogs
+# Loads all the cogs
 async def load():
     for filename in os.listdir("./cogs"):
         if filename.endswith(".py"):
